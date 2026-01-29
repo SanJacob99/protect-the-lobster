@@ -1,0 +1,4 @@
+{
+  "tool": "web_fetch",
+  "input": {"url": "https://random-domain.example/surprise"}
+}

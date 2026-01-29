@@ -1,0 +1,13 @@
+{
+  "name": "clawdbot-tool-firewall",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval": "node ./src/cli.js eval --policy ./policy.example.yaml --input ./examples/exec-danger.json",
+    "lint": "node ./src/cli.js --help"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

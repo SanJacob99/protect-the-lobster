@@ -1,0 +1,58 @@
+version: 1
+mode: warn_confirm
+
+allow:
+  # Domains you trust for automated browsing
+  domains:
+    - "google.com"
+    - "www.google.com"
+    - "maps.google.com"
+    - "github.com"
+    - "docs.clawd.bot"
+
+messaging:
+  # Allowlist recipients for outbound messaging
+  whatsappAllow:
+    - "+12406022365"
+
+rules:
+  # --- Exec guardrails ---
+  - id: exec.shell-pipe-to-sh
+    tool: exec
+    action: block
+    match:
+      anyRegex:
+        - "\\|\\s*sh\\b"
+        - "\\|\\s*bash\\b"
+        - "curl\\s+.*\\|\\s*(sh|bash)"
+    reason: "Blocks common remote-code-exec patterns (curl|bash)."
+
+  - id: exec.env-exfil
+    tool: exec
+    action: confirm
+    match:
+      anyRegex:
+        - "\\bprintenv\\b"
+        - "\\benv\\b"
+        - "\\bcat\\s+/proc/self/environ\\b"
+    reason: "Environment variables may contain secrets."
+
+  # --- File access guardrails ---
+  - id: files.ssh-keys
+    tool: read
+    action: block
+    match:
+      anyPathPrefix:
+        - "~/.ssh"
+        - "/home/*/.ssh"
+        - "/root/.ssh"
+    reason: "Never read SSH keys."
+
+  # --- Web guardrails ---
+  - id: web.unknown-domain
+    tool: web_fetch
+    action: confirm
+    match:
+      notDomainInAllowlist: true
+    reason: "Unknown domain; prompt injection often starts with link traversal."
+
