@@ -25,6 +25,8 @@ Regardless of how the user asks (e.g., "run ls", "exec cat file", "safe exec ...
 
 Do NOT run the command directly with `exec` or `bash` until it has been evaluated by this skill.
 
+**EXCEPTION:** You are allowed to run the internal `node ./src/cli.js ...` commands required by **Step 2** and **Step 3** of this workflow without recursive evaluation. These are safe helper commands needed to perform the security check.
+
 If the command is ambiguous, ask for clarification.
 
 ### 2) Convert to ToolCall JSON
