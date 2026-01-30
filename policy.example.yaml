@@ -56,3 +56,10 @@ rules:
       notDomainInAllowlist: true
     reason: "Unknown domain; prompt injection often starts with link traversal."
 
+  # --- Messaging guardrails ---
+  - id: msg.unknown-recipient
+    tool: message.send
+    action: block
+    match:
+      notRecipientInAllowlist: true
+    reason: "Recipient not in allowlist."
