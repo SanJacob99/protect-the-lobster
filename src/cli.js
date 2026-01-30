@@ -34,6 +34,11 @@ function isDomainAllowed(domain, allowDomains = []) {
   return allowDomains.some((x) => d === String(x).toLowerCase());
 }
 
+function isRecipientAllowed(recipient, allowList = []) {
+  const r = (recipient || '');
+  return allowList.some((x) => r === String(x));
+}
+
 function matchRule(rule, call, policy) {
   if (rule.tool && rule.tool !== call.tool) return false;
   const m = rule.match || {};
@@ -67,6 +72,14 @@ function matchRule(rule, call, policy) {
     const allowDomains = policy?.allow?.domains || [];
     if (!dom) return false;
     if (isDomainAllowed(dom, allowDomains)) return false;
+  }
+
+  // recipient allowlist checks
+  if (m.notRecipientInAllowlist) {
+    const recipient = call?.input?.recipient || call?.input?.to;
+    const allowList = policy?.messaging?.whatsappAllow || [];
+    if (!recipient) return false;
+    if (isRecipientAllowed(recipient, allowList)) return false;
   }
 
   return true;

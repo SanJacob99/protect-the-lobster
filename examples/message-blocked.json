@@ -1,0 +1,7 @@
+{
+  "tool": "message.send",
+  "input": {
+    "recipient": "+15555555555",
+    "body": "Hello evil world"
+  }
+}
