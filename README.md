@@ -1,13 +1,12 @@
-# Clawdbot Tool Firewall (Standalone)
+# protect-the-lobster
 
-A standalone “warn + confirm” policy engine for Clawdbot/Moltbot-style tool calls.
+Standalone “warn + confirm” (Windows UAC-style) **tool-call firewall** for Clawdbot/Moltbot.
 
-## Goal
-Prevent prompt-injection from turning into real-world actions by gating **tool calls**.
+Primary goal: reduce prompt-injection impact by ensuring **tool calls are gated** before execution.
 
-This repo is **not integrated** into your running Clawdbot yet.
+> Current focus: `exec`.
 
-## Concept
+## What it does
 Given a proposed tool call:
 
 ```json
@@ -19,18 +18,57 @@ Given a proposed tool call:
 
 Evaluate it against `policy.yaml` and return a decision:
 - `ALLOW`
-- `CONFIRM` (warn + require approval)
+- `CONFIRM` (ask user YES/NO)
 - `BLOCK`
 
-Also supports redaction and audit logs.
+## Default posture
+`policy.yaml` is configured for:
+- **CONFIRM unless explicitly allowlisted**
+- **BLOCK** for common prompt-injection / exfil / RCE patterns (e.g., `curl | bash`)
 
-## Planned scope (MVP)
-- Tools: `exec`, `read/write/edit`, `web_fetch`, `browser` navigation, `message.send`
-- Rule actions: allow / confirm / block
-- Matchers: tool name, URL domains, file paths, command patterns, recipient allowlist
-- Output: decision + reason codes + suggested safe alternative
+## Install
+```bash
+npm install
+```
 
-## Next
-- Implement rule schema + evaluator
-- Provide a CLI: `tool-firewall eval --policy policy.yaml --input examples/*.json`
+## CLI usage
+### 1) Create ToolCall JSON for exec
+```bash
+node src/cli.js exec-to-json --command "ls -la" --out /tmp/lobster-exec.json
+```
+
+### 2) Evaluate
+```bash
+node src/cli.js eval --policy ./policy.yaml --input /tmp/lobster-exec.json
+```
+
+### 3) Format a WhatsApp-friendly approval prompt
+```bash
+node src/cli.js format-confirm --command "cat /etc/os-release" --reason "Default posture."
+```
+
+Produces:
+```
+Security check: needs approval
+Command: cat /etc/os-release
+Reason: Default posture.
+Reply YES to run, or NO to cancel.
+```
+
+## Examples
+```bash
+node src/cli.js eval --policy policy.yaml --input examples/exec-safe.json
+node src/cli.js eval --policy policy.yaml --input examples/exec-confirm.json
+node src/cli.js eval --policy policy.yaml --input examples/exec-block.json
+```
+
+## Clawdbot usage (Option 1 wrapper)
+This repo itself is standalone, but it’s designed to be used as a wrapper workflow.
+See:
+- `docs/clawdbot-integration.md`
+
+## Roadmap
+- Add structured reason codes + redaction
+- Extend beyond `exec`: `read/write/edit`, `web_fetch`, `browser` navigation, `message.send`
+- Optional: full Gateway/tool-policy integration
 
