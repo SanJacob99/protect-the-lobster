@@ -1,0 +1,4 @@
+{
+  "tool": "exec",
+  "input": {"command": "ls -la"}
+}

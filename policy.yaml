@@ -1,0 +1,76 @@
+version: 1
+# Default posture: require confirmation unless explicitly allowed.
+defaultDecision: confirm
+
+actions:
+  # Keywords we accept as user approval replies.
+  approveWords: ["YES", "Y", "APPROVE", "OK"]
+  denyWords: ["NO", "N", "DENY", "CANCEL"]
+
+exec:
+  # Explicit allowlist for low-risk commands.
+  # Keep this list tight.
+  allowRegex:
+    - '^\s*ls(\s|$)'
+    - '^\s*pwd\s*$'
+    - '^\s*whoami\s*$'
+    - '^\s*date\s*$'
+    - '^\s*uptime\s*$'
+    - '^\s*df\s+-h(\s|$)'
+    - '^\s*free\s+-h(\s|$)'
+    - '^\s*git\s+status(\s|$)'
+    - '^\s*git\s+diff(\s|$)'
+    - '^\s*node\s+--version\s*$'
+    - '^\s*npm\s+--version\s*$'
+
+  # Hard blocks: common prompt-injection / exfil / RCE patterns.
+  blockRegex:
+    # Remote code execution patterns
+    - 'curl\s+[^|]+\|\s*(sh|bash)'
+    - 'wget\s+[^|]+\|\s*(sh|bash)'
+    - '\|\s*(sh|bash)\b'
+
+    # Token / credential dumping
+    - '\bcat\s+/proc/self/environ\b'
+    - '\bprintenv\b'
+    - '\benv\b\s*(\||$)'
+
+    # Sensitive file access via exec
+    - '\bcat\s+.*\.ssh/'
+    - '\bcat\s+.*id_rsa\b'
+    - '\bcat\s+.*id_ed25519\b'
+    - '\bcat\s+.*\.env\b'
+
+    # SSH / key material operations
+    - '\bssh\b'
+    - '\bssh-keygen\b'
+    - '\bopenssl\s+.*(rsa|ec|pkey)\b'
+
+  # Confirm list: allowed sometimes, but risky enough to require explicit approval.
+  confirmRegex:
+    - '\bcat\b'
+    - '\bchmod\b'
+    - '\bchown\b'
+    - '\brm\b'
+    - '\bmv\b'
+    - '\bcp\b'
+    - '\bsudo\b'
+    - '\bapt(-get)?\b'
+    - '\bsystemctl\b'
+    - '\bservice\b'
+    - '\bdocker\b'
+    - '\bkubectl\b'
+
+allow:
+  # Domains you trust for automated browsing (future use).
+  domains:
+    - "google.com"
+    - "www.google.com"
+    - "maps.google.com"
+    - "github.com"
+    - "docs.clawd.bot"
+
+messaging:
+  # Allowlist recipients for outbound messaging (future use).
+  whatsappAllow:
+    - "+12406022365"

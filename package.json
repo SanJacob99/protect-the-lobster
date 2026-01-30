@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "eval": "node ./src/cli.js eval --policy ./policy.example.yaml --input ./examples/exec-danger.json",
-    "lint": "node ./src/cli.js --help"
+    "eval": "node ./src/cli.js eval --policy ./policy.yaml --input ./examples/exec-danger.json",
+    "exec:json": "node ./src/cli.js exec-to-json --command \"ls -la\"",
+    "confirm:fmt": "node ./src/cli.js format-confirm --command \"printenv\" --reason \"Environment variables may contain secrets.\""
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
