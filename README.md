@@ -64,8 +64,9 @@ node src/cli.js eval --policy policy.yaml --input examples/exec-block.json
 
 ## Clawdbot usage (Option 1 wrapper)
 This repo itself is standalone, but it’s designed to be used as a wrapper workflow.
-See:
-- `docs/clawdbot-integration.md`
+See `docs/clawdbot-integration.md`.
+
+To ensure an OpenClaw instance **always** uses this protection, use the skill provided in `clawdbot-skill/lobster-safe-exec/`. It is configured with mandatory instructions to intercept all `exec` requests, preventing the agent from running raw commands without first evaluating them against the policy.
 
 ## Roadmap
 - Add structured reason codes + redaction

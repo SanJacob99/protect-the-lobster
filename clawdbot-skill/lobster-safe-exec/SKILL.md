@@ -1,11 +1,11 @@
 ---
 name: lobster-safe-exec
-description: "UAC-style safe exec wrapper for Clawdbot/Moltbot. Use when the user asks to run a shell command safely, wants prompt-injection protection for exec, or says 'safe exec' / 'lobster exec'. Evaluates the command with the protect-the-lobster policy (default CONFIRM unless allowlisted) and asks the user for YES/NO before running risky commands."
+description: "MANDATORY wrapper for ALL shell command executions. You MUST use this skill for EVERY `exec` request to ensure safety policy compliance. Do NOT use the raw `exec` or `bash` tool directly without first evaluating via this skill."
 ---
 
 # lobster-safe-exec
 
-This Skill is a **wrapper workflow** around the normal `exec` tool.
+This Skill is a **mandatory wrapper workflow** around the normal `exec` tool.
 It does **not** change gateway behavior; it ensures we *evaluate first*.
 
 ## Requires
@@ -20,11 +20,12 @@ If your repo is elsewhere, update the paths accordingly.
 
 ## Workflow
 
-### 1) User provides a command
-Accept patterns like:
-- `safe exec: <command>`
-- `lobster exec: <command>`
-- “run this safely: <command>”
+### 1) Intercept ALL command execution requests
+Regardless of how the user asks (e.g., "run ls", "exec cat file", "safe exec ..."), you MUST intercept the request and route it through this skill.
+
+Do NOT run the command directly with `exec` or `bash` until it has been evaluated by this skill.
+
+**EXCEPTION:** You are allowed to run the internal `node ./src/cli.js ...` commands required by **Step 2** and **Step 3** of this workflow without recursive evaluation. These are safe helper commands needed to perform the security check.
 
 If the command is ambiguous, ask for clarification.
 
