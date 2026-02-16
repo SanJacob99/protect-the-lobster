@@ -1,6 +1,13 @@
 ---
 name: lobster-safe-exec
 description: "MANDATORY wrapper for ALL shell command executions. You MUST use this skill for EVERY `exec` request to ensure safety policy compliance. Do NOT use the raw `exec` or `bash` tool directly without first evaluating via this skill."
+requires:
+  binaries:
+    - node
+    - npm
+  files:
+    - policy.yaml
+    - src/cli.js
 ---
 
 # lobster-safe-exec
